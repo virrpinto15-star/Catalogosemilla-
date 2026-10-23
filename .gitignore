@@ -1,0 +1,26 @@
+# Archivos de compilación
+bin/
+obj/
+
+# Configuración local de Visual Studio
+*.user
+.vs/
+*.slnx.user
+
+# Logs
+*.log
+
+# Archivos de publicación
+publish/
+
+# Secretos y configs locales (NO subir la connection string de producción)
+appsettings.Development.json
+
+# Imágenes de productos subidas (son locales, Railway las pierde igual al reiniciar)
+# wwwroot/images/*.jpg
+# wwwroot/images/*.png
+
+# Archivos del sistema
+.DS_Store
+Thumbs.db
+
