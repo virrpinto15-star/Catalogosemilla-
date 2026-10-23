@@ -1,0 +1,69 @@
+@{
+    ViewData["Title"] = "Acceso Administrador";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container d-flex justify-content-center align-items-center" style="min-height: 70vh;">
+    <div class="card shadow-lg border-0" style="width: 100%; max-width: 420px; border-radius: 16px; overflow: hidden;">
+
+        <!-- Header verde -->
+        <div class="card-header text-white text-center py-4" style="background: linear-gradient(135deg, #2d6a4f, #1b4332);">
+            <div style="font-size: 3rem;">🌱</div>
+            <h4 class="mb-0 fw-bold">Semilla de Vida</h4>
+            <small class="opacity-75">Panel de Administración</small>
+        </div>
+
+        <div class="card-body p-4" style="background: #f9fdf9;">
+
+            @if (!string.IsNullOrEmpty(ViewBag.Error as string))
+            {
+                <div class="alert alert-danger d-flex align-items-center gap-2" role="alert">
+                    <span>🔒</span>
+                    <span>@ViewBag.Error</span>
+                </div>
+            }
+
+            <form method="post" asp-controller="Admin" asp-action="Login">
+                <input type="hidden" name="returnUrl" value="@ViewBag.ReturnUrl" />
+
+                <div class="mb-3">
+                    <label class="form-label fw-semibold text-secondary">
+                        👤 Usuario
+                    </label>
+                    <input type="text"
+                           name="usuario"
+                           class="form-control form-control-lg"
+                           placeholder="Tu usuario"
+                           autofocus
+                           required
+                           style="border-color: #74c69d; border-radius: 10px;" />
+                </div>
+
+                <div class="mb-4">
+                    <label class="form-label fw-semibold text-secondary">
+                        🔑 Contraseña
+                    </label>
+                    <input type="password"
+                           name="password"
+                           class="form-control form-control-lg"
+                           placeholder="Tu contraseña"
+                           required
+                           style="border-color: #74c69d; border-radius: 10px;" />
+                </div>
+
+                <button type="submit"
+                        class="btn btn-lg w-100 text-white fw-bold"
+                        style="background: linear-gradient(135deg, #2d6a4f, #40916c); border: none; border-radius: 10px; padding: 12px;">
+                    🔓 Ingresar al Panel
+                </button>
+            </form>
+
+            <div class="text-center mt-3">
+                <a href="/" class="text-decoration-none" style="color: #40916c; font-size: 0.9rem;">
+                    ← Volver al catálogo
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+

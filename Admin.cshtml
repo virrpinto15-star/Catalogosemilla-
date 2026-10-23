@@ -1,0 +1,170 @@
+@model List<CatalogoPapa.Models.Producto>
+
+@{
+    ViewData["Title"] = "Panel de Administración - Semilla de Vida";
+    var categorias = ViewBag.Categorias as List<CatalogoPapa.Models.Categoria>;
+}
+
+<div class="container py-3">
+    <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+        <div>
+            <h1 class="h2 fw-bold text-dark mb-1">⚙️ Gestión de Productos y Categorías</h1>
+            <p class="text-muted mb-0">Carga nuevos productos, agrega categorías, actualiza precios y fotos.</p>
+        </div>
+        <div class="d-flex gap-2 flex-wrap">
+            <button type="button" class="btn btn-outline-success btn-lg shadow-sm" data-bs-toggle="modal" data-bs-target="#modalNuevaCategoria">
+                🏷️ Nueva Categoría
+            </button>
+            <a asp-action="Crear" class="btn btn-success btn-lg shadow-sm">
+                ➕ Nuevo Producto
+            </a>
+            <a asp-action="Index" class="btn btn-outline-secondary btn-lg">
+                Ver Catálogo
+            </a>
+        </div>
+    </div>
+
+    <!-- Barra de Categorías Actuales -->
+    @if (categorias != null && categorias.Any())
+    {
+        <div class="card border-0 shadow-sm rounded-4 mb-4 p-3 bg-white">
+            <div class="d-flex align-items-center justify-content-between flex-wrap gap-2">
+                <div class="d-flex align-items-center gap-2 flex-wrap">
+                    <span class="fw-bold text-muted me-2">Categorías activas (@categorias.Count):</span>
+                    @foreach (var cat in categorias)
+                    {
+                        <span class="badge bg-success-subtle text-success border border-success-subtle px-3 py-2 fs-6">
+                            @cat.Nombre
+                        </span>
+                    }
+                </div>
+            </div>
+        </div>
+    }
+
+    @if (!Model.Any())
+    {
+        <div class="card border-0 shadow-sm text-center py-5 rounded-4">
+            <div class="card-body">
+                <span class="display-3 text-muted">📦</span>
+                <h4 class="fw-bold mt-3">No hay productos registrados</h4>
+                <p class="text-muted mb-4">Comienza agregando tu primer producto al catálogo.</p>
+                <a asp-action="Crear" class="btn btn-success btn-lg">
+                    ➕ Crear Producto
+                </a>
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
+            <div class="card-header bg-white py-3 border-bottom d-flex justify-content-between align-items-center">
+                <span class="fw-bold text-muted">
+                    Total: @Model.Count productos registrados
+                </span>
+            </div>
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th style="width: 80px;" class="text-center">Foto</th>
+                            <th>Nombre</th>
+                            <th>Categoría</th>
+                            <th class="text-end">Precio</th>
+                            <th class="text-center">Stock</th>
+                            <th class="text-end" style="min-width: 170px;">Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var prod in Model)
+                        {
+                            <tr>
+                                <td class="text-center">
+                                    <div class="bg-light rounded p-1 d-inline-flex align-items-center justify-content-center" style="width: 55px; height: 55px;">
+                                        @if (!string.IsNullOrEmpty(prod.Imagen))
+                                        {
+                                            <img src="~/images/@prod.Imagen" alt="@prod.Nombre" style="max-width: 100%; max-height: 100%; object-fit: contain;" />
+                                        }
+                                        else
+                                        {
+                                            <span>📦</span>
+                                        }
+                                    </div>
+                                </td>
+                                <td>
+                                    <h6 class="mb-0 fw-bold">@prod.Nombre</h6>
+                                    <small class="text-muted text-truncate d-inline-block" style="max-width: 250px;">
+                                        @(string.IsNullOrEmpty(prod.Descripcion) ? "Sin descripción" : prod.Descripcion)
+                                    </small>
+                                </td>
+                                <td>
+                                    <span class="badge bg-light text-dark border">
+                                        @(prod.Categoria?.Nombre ?? "Sin categoría")
+                                    </span>
+                                </td>
+                                <td class="text-end fw-bold text-success fs-6">
+                                    $@prod.Precio.ToString("N2")
+                                </td>
+                                <td class="text-center">
+                                    @if (prod.Stock > 0)
+                                    {
+                                        <span class="badge bg-success-subtle text-success border border-success-subtle px-3 py-2">
+                                            @prod.Stock unid.
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-danger px-3 py-2">
+                                            Sin stock
+                                        </span>
+                                    }
+                                </td>
+                                <td class="text-end">
+                                    <div class="btn-group">
+                                        <a asp-action="Editar" asp-route-id="@prod.Id" class="btn btn-sm btn-outline-primary" title="Editar precio, stock o datos">
+                                            ✏️ Editar
+                                        </a>
+                                        <form asp-action="Eliminar" asp-route-id="@prod.Id" method="post" class="d-inline" onsubmit="return confirm('¿Seguro que deseas eliminar este producto permanentemente?');">
+                                            <button type="submit" class="btn btn-sm btn-outline-danger" title="Eliminar">
+                                                🗑️
+                                            </button>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    }
+</div>
+
+<!-- Modal para Crear Nueva Categoría -->
+<div class="modal fade" id="modalNuevaCategoria" tabindex="-1" aria-labelledby="modalNuevaCategoriaLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content rounded-4 border-0 shadow">
+            <div class="modal-header border-bottom">
+                <h5 class="modal-title fw-bold" id="modalNuevaCategoriaLabel">🏷️ Nueva Categoría</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+            </div>
+            <form asp-action="CrearCategoria" method="post">
+                <div class="modal-body p-4">
+                    <div class="mb-3">
+                        <label for="nombreCategoria" class="form-label fw-bold">Nombre de la Categoría *</label>
+                        <input type="text" name="nombre" id="nombreCategoria" class="form-control form-control-lg" placeholder="Ej: Semillas, Tés e Infusiones, Aceites..." required />
+                    </div>
+                    <div class="mb-3">
+                        <label for="descripcionCategoria" class="form-label fw-bold">Descripción (opcional)</label>
+                        <textarea name="descripcion" id="descripcionCategoria" class="form-control" rows="2" placeholder="Breve descripción de la categoría..."></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer border-top">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-success px-4">💾 Guardar Categoría</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
